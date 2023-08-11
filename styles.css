@@ -1,0 +1,25 @@
+body {
+    text-align: center;
+    background-color: olivedrab;
+}
+
+h3 {
+    border: 2px;
+    border-style: solid;
+    padding: 2px;
+    background-color: green;
+}
+
+#greeting {
+    border: 2px;
+    border-style: solid;
+    padding: 2px;
+    background-color: red;
+}
+
+.text {
+    border: 2px;
+    border-style: solid;
+    padding: 2px;
+    background-color: orange;
+}

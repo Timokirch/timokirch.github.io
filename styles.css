@@ -23,3 +23,10 @@ h3 {
     padding: 2px;
     background-color: orange;
 }
+
+.text {
+    border: 2px;
+    border-style: solid;
+    padding: 2px;
+    background-color: lightcoral;
+}

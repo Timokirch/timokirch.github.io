@@ -1,32 +1,33 @@
 body {
     text-align: center;
     background-color: olivedrab;
-}
-
-h3 {
+  }
+  
+  h3 {
     border: 2px;
     border-style: solid;
     padding: 2px;
     background-color: green;
-}
-
-#greeting {
+  }
+  
+  #greeting {
     border: 2px;
     border-style: solid;
     padding: 2px;
     background-color: red;
-}
-
-.text {
+  }
+  
+  .text {
     border: 2px;
     border-style: solid;
     padding: 2px;
     background-color: orange;
-}
-
-.text2 {
+  }
+  
+  .text2 {
     border: 2px;
     border-style: solid;
     padding: 2px;
     background-color: lightcoral;
-}
+  }
+  

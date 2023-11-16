@@ -1,0 +1,10 @@
+CACHE MANIFEST
+#Version 0.1
+
+index.html
+#scripts.js
+styles.css
+#/images/gymnastics.jpg
+#/images/soccer.png
+#/images/gym.jpg
+#/images/soccer.jpg

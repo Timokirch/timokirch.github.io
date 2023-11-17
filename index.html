@@ -62,6 +62,9 @@
 
       request.onsuccess = function(event) {
           db = event.target.result;
+
+          // Retrieve and display locally stored notes on page load
+          displayStoredNotes();
       };
 
       // Handle user input and save locally
@@ -122,10 +125,7 @@
               console.error('Error adding data locally.');
           };
       }  
-
-      // Retrieve and display locally stored notes on page load
-      displayStoredNotes();
-
+      
       function displayStoredNotes() {
           const transaction = db.transaction(['myData'], 'readonly');
           const objectStore = transaction.objectStore('myData');

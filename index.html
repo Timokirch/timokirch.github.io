@@ -96,20 +96,6 @@
         }
       }
 
-      // Retrieve and display locally stored notes on page load
-      displayStoredNotes();
-
-      function displayStoredNotes() {
-          const transaction = db.transaction(['myData'], 'readonly');
-          const objectStore = transaction.objectStore('myData');
-          const request = objectStore.getAll();
-
-          request.onsuccess = function (event) {
-              const notes = event.target.result;
-              notes.forEach(appendNoteToList);
-          };
-      }
-
       // Open or create an IndexedDB database
       var db;
       var request = indexedDB.open('MyDatabase', 1);
@@ -178,6 +164,20 @@
           var transaction = db.transaction(['myData'], 'readwrite');
           var objectStore = transaction.objectStore('myData');
           objectStore.clear();
+      }
+
+      // Retrieve and display locally stored notes on page load
+      displayStoredNotes();
+
+      function displayStoredNotes() {
+          const transaction = db.transaction(['myData'], 'readonly');
+          const objectStore = transaction.objectStore('myData');
+          const request = objectStore.getAll();
+
+          request.onsuccess = function (event) {
+              const notes = event.target.result;
+              notes.forEach(appendNoteToList);
+          };
       }
     });
   </script>

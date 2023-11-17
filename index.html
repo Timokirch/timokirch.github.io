@@ -169,10 +169,10 @@
                 const note = noteInput.value.trim();
                 if (note) {
                     // Save the note locally
-                    saveDataLocally({ note });
+                    saveDataLocally({ note: note });  // Ensure 'note' property is set in the data object
 
                     // Update the UI
-                    appendNoteToList(note);
+                    appendNoteToList({ note: note });  // Ensure 'note' property is set in the data object
 
                     // Clear the input field
                     noteInput.value = '';

@@ -31,3 +31,7 @@ body {
     background-color: lightcoral;
   }
   
+  .offline-message {
+    color: red;
+    font-weight: bold;
+}

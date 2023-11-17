@@ -11,6 +11,7 @@
   </head>
   <body>
     <h3>Hello World</h3>
+    <div id="status-message" class="offline-message"></div>
     <p id="greeting">Nice to meet you!</p>
     <p class="text">This is a text!</p>
     <p class="text2">This is for Rainer!</p>
@@ -25,6 +26,24 @@
             .catch(function(error) {
                 console.error('Service Worker registration failed:', error);
             });
+
+        // Add an event listener to detect the online/offline status
+        window.addEventListener('online', updateStatus);
+        window.addEventListener('offline', updateStatus);
+
+        // Initial status update
+        updateStatus();
+    }
+
+    function updateStatus() {
+        const statusMessage = document.getElementById('status-message');
+        if (navigator.onLine) {
+            statusMessage.textContent = 'Online';
+            statusMessage.style.color = 'green';
+        } else {
+            statusMessage.textContent = 'Offline';
+            statusMessage.style.color = 'red';
+        }
     }
   </script>
 </html>

@@ -132,13 +132,20 @@
                 function deleteNoteLocally(note) {
                     const transaction = db.transaction(['myData'], 'readwrite');
                     const objectStore = transaction.objectStore('myData');
-                    const request = objectStore.delete(note);
+                    const request = objectStore.index('note').get(note);
 
-                    request.onsuccess = function(event) {
-                        console.log('Note deleted locally.');
+                    request.onsuccess = function (event) {
+                        const result = event.target.result;
+
+                        if (result) {
+                            objectStore.delete(result.id);
+                            console.log('Note deleted locally.');
+                        } else {
+                            console.error('Note not found for deletion.');
+                        }
                     };
 
-                    request.onerror = function(event) {
+                    request.onerror = function (event) {
                         console.error('Error deleting note locally.');
                     };
                 }

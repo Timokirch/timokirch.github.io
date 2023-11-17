@@ -22,38 +22,40 @@
     <span>Online/Offline Status</span>
   </footer>
   <script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('service-worker.js')
-            .then(function(registration) {
-                console.log('Service Worker registered with scope:', registration.scope);
-            })
-            .catch(function(error) {
-                console.error('Service Worker registration failed:', error);
-            });
+    document.addEventListener('DOMContentLoaded', function () {
+      if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('service-worker.js')
+              .then(function(registration) {
+                  console.log('Service Worker registered with scope:', registration.scope);
+              })
+              .catch(function(error) {
+                  console.error('Service Worker registration failed:', error);
+              });
 
-        // Add an event listener to detect the online/offline status
-        window.addEventListener('online', updateStatus);
-        window.addEventListener('offline', updateStatus);
+          // Add an event listener to detect the online/offline status
+          window.addEventListener('online', updateStatus);
+          window.addEventListener('offline', updateStatus);
 
-        // Initial status update
-        updateStatus();
-    }
-
-    function updateStatus() {
-      const statusMessage = document.getElementById('status-message');
-      const statusDot = document.getElementById('status-dot');
-      if (navigator.onLine) {
-          statusMessage.textContent = 'Online';
-          statusMessage.style.color = 'green';
-          statusDot.style.backgroundColor = 'green';
-
-          // Send a message to the Service Worker to update the cache
-          navigator.serviceWorker.controller.postMessage('online');
-      } else {
-          statusMessage.textContent = 'Offline';
-          statusMessage.style.color = 'red';
-          statusDot.style.backgroundColor = 'red';
+          // Initial status update
+          updateStatus();
       }
-    }
+
+      function updateStatus() {
+        const statusMessage = document.getElementById('status-message');
+        const statusDot = document.getElementById('status-dot');
+        if (navigator.onLine) {
+            statusMessage.textContent = 'Online';
+            statusMessage.style.color = 'green';
+            statusDot.style.backgroundColor = 'green';
+
+            // Send a message to the Service Worker to update the cache
+            navigator.serviceWorker.controller.postMessage('online');
+        } else {
+            statusMessage.textContent = 'Offline';
+            statusMessage.style.color = 'red';
+            statusDot.style.backgroundColor = 'red';
+        }
+      }
+    });
   </script>
 </html>

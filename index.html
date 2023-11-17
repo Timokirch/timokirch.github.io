@@ -11,14 +11,13 @@
   </head>
   <body>
     <h3>Hello World</h3>
-    <div id="status-message" class="offline-message"></div>
     <p id="greeting">Nice to meet you!</p>
     <p class="text">This is a text!</p>
     <p class="text2">This is for Rainer!</p>
   </body>
   <footer>
     <span id="status-dot"></span>
-    <span>Online/Offline Status</span>
+    <span id="status-message"></span>
   </footer>
   <!-- Service Worker -->
   <script>
@@ -45,14 +44,14 @@
         const statusDot = document.getElementById('status-dot');
         if (navigator.onLine) {
             statusMessage.textContent = 'Online';
-            statusMessage.style.color = 'green';
+            //statusMessage.style.color = 'green';
             statusDot.style.backgroundColor = 'green';
 
             // Send a message to the Service Worker to update the cache
             navigator.serviceWorker.controller.postMessage('online');
         } else {
             statusMessage.textContent = 'Offline';
-            statusMessage.style.color = 'red';
+            //statusMessage.style.color = 'red';
             statusDot.style.backgroundColor = 'red';
         }
       }

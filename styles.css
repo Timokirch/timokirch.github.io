@@ -3,37 +3,32 @@ body {
     background-color: olivedrab;
   }
   
-  h3 {
-    border: 2px;
-    border-style: solid;
-    padding: 2px;
-    background-color: green;
-  }
-  
-  #greeting {
-    border: 2px;
-    border-style: solid;
-    padding: 2px;
-    background-color: red;
-  }
-  
-  .text {
-    border: 2px;
-    border-style: solid;
-    padding: 2px;
-    background-color: orange;
-  }
-  
-  .text2 {
-    border: 2px;
-    border-style: solid;
-    padding: 2px;
-    background-color: lightcoral;
-  }
-  
-  .offline-message {
-    color: red;
-    font-weight: bold;
+h3 {
+  border: 2px;
+  border-style: solid;
+  padding: 2px;
+  background-color: green;
+}
+
+#greeting {
+  border: 2px;
+  border-style: solid;
+  padding: 2px;
+  background-color: red;
+}
+
+.text {
+  border: 2px;
+  border-style: solid;
+  padding: 2px;
+  background-color: orange;
+}
+
+.text2 {
+  border: 2px;
+  border-style: solid;
+  padding: 2px;
+  background-color: lightcoral;
 }
 
 footer {
@@ -54,10 +49,6 @@ footer {
   margin-right: 5px;
 }
 
-#online-dot {
-  background-color: green;
-}
-
-#offline-dot {
-  background-color: red;
+#status-message {
+  font-weight: normal;
 }

@@ -51,6 +51,19 @@
           updateStatus();
       }
 
+      // IndexedDB setup
+      var db;
+      var request = indexedDB.open('MyDatabase', 1);
+
+      request.onupgradeneeded = function(event) {
+          db = event.target.result;
+          var objectStore = db.createObjectStore('myData', { keyPath: 'id', autoIncrement: true });
+      };
+
+      request.onsuccess = function(event) {
+          db = event.target.result;
+      };
+
       // Handle user input and save locally
       const noteForm = document.getElementById('note-form');
       const noteInput = document.getElementById('note-input');
@@ -95,19 +108,6 @@
             statusDot.style.backgroundColor = 'red';
         }
       }
-
-      // Open or create an IndexedDB database
-      var db;
-      var request = indexedDB.open('MyDatabase', 1);
-
-      request.onupgradeneeded = function(event) {
-          db = event.target.result;
-          var objectStore = db.createObjectStore('myData', { keyPath: 'id', autoIncrement: true });
-      };
-
-      request.onsuccess = function(event) {
-          db = event.target.result;
-      };
 
       function saveDataLocally(data) {
           var transaction = db.transaction(['myData'], 'readwrite');

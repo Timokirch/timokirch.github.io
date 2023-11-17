@@ -33,111 +33,137 @@
   <!-- Service Worker -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('service-worker.js')
-              .then(function(registration) {
-                  console.log('Service Worker registered with scope:', registration.scope);
-              })
-              .catch(function(error) {
-                  console.error('Service Worker registration failed:', error);
-              });
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.error('Service Worker registration failed:', error);
+                    });
 
-          // Add an event listener to detect the online/offline status
-          window.addEventListener('online', updateStatus);
-          //window.addEventListener('online', syncData);
-          window.addEventListener('offline', updateStatus);
+                // Add an event listener to detect the online/offline status
+                window.addEventListener('online', updateStatus);
+                window.addEventListener('offline', updateStatus);
 
-          // Initial status update
-          updateStatus();
-      }
+                // Initial status update
+                updateStatus();
 
-      // IndexedDB setup
-      var db;
-      var request = indexedDB.open('MyDatabase', 1);
+                // IndexedDB setup
+                var db;
+                var request = indexedDB.open('MyDatabase', 1);
 
-      request.onupgradeneeded = function(event) {
-          db = event.target.result;
-          var objectStore = db.createObjectStore('myData', { keyPath: 'id', autoIncrement: true });
-      };
+                request.onupgradeneeded = function(event) {
+                    db = event.target.result;
+                    var objectStore = db.createObjectStore('myData', { keyPath: 'id', autoIncrement: true });
+                };
 
-      request.onsuccess = function(event) {
-          db = event.target.result;
+                request.onsuccess = function(event) {
+                    db = event.target.result;
 
-          // Retrieve and display locally stored notes on page load
-          displayStoredNotes();
-      };
+                    // Retrieve and display locally stored notes on page load
+                    displayStoredNotes();
+                };
 
-      // Handle user input and save locally
-      const noteForm = document.getElementById('note-form');
-      const noteInput = document.getElementById('note-input');
-      const notesList = document.getElementById('notes-list');
+                function saveDataLocally(data) {
+                    var transaction = db.transaction(['myData'], 'readwrite');
+                    var objectStore = transaction.objectStore('myData');
+                    var request = objectStore.add(data);
 
-      noteForm.addEventListener('submit', function (event) {
-          event.preventDefault();
+                    request.onsuccess = function(event) {
+                        console.log('Data added locally.');
+                    };
 
-          const note = noteInput.value.trim();
-          if (note) {
-              // Save the note locally
-              saveDataLocally({ note });
+                    request.onerror = function(event) {
+                        console.error('Error adding data locally.');
+                    };
+                }
 
-              // Update the UI
-              appendNoteToList(note);
+                function appendNoteToList(note) {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'note';
+                    listItem.innerHTML = `
+                        <span>${note}</span>
+                        <span class="delete-icon" onclick="deleteNote('${note}')">&#128465;</span>
+                    `;
+                    notesList.appendChild(listItem);
+                }
 
-              // Clear the input field
-              noteInput.value = '';
-          }
-      });
+                function updateStatus() {
+                    const statusMessage = document.getElementById('status-message');
+                    const statusDot = document.getElementById('status-dot');
+                    if (navigator.onLine) {
+                        statusMessage.textContent = 'Online';
+                        //statusMessage.style.color = 'green';
+                        statusDot.style.backgroundColor = 'green';
+                    } else {
+                        statusMessage.textContent = 'Offline';
+                        //statusMessage.style.color = 'red';
+                        statusDot.style.backgroundColor = 'red';
+                    }
+                }
 
-      function appendNoteToList(note) {
-          const listItem = document.createElement('li');
-          listItem.className = 'note';
-          listItem.textContent = note;
-          notesList.appendChild(listItem);
-      }
+                function displayStoredNotes() {
+                    const transaction = db.transaction(['myData'], 'readonly');
+                    const objectStore = transaction.objectStore('myData');
+                    const request = objectStore.getAll();
 
-      function updateStatus() {
-        const statusMessage = document.getElementById('status-message');
-        const statusDot = document.getElementById('status-dot');
-        if (navigator.onLine) {
-            statusMessage.textContent = 'Online';
-            //statusMessage.style.color = 'green';
-            statusDot.style.backgroundColor = 'green';
+                    request.onsuccess = function (event) {
+                        const notes = event.target.result;
+                        notes.forEach(appendNoteToList);
+                    };
+                }
 
-            // Send a message to the Service Worker to update the cache
-            navigator.serviceWorker.controller.postMessage('online');
-        } else {
-            statusMessage.textContent = 'Offline';
-            //statusMessage.style.color = 'red';
-            statusDot.style.backgroundColor = 'red';
-        }
-      }
+                window.deleteNote = function(note) {
+                    if (confirm(`Do you really want to delete the note "${note}"?`)) {
+                        // Delete the note locally
+                        deleteNoteLocally(note);
 
-      function saveDataLocally(data) {
-          var transaction = db.transaction(['myData'], 'readwrite');
-          var objectStore = transaction.objectStore('myData');
-          var request = objectStore.add(data);
+                        // Update the UI by removing the deleted note
+                        const noteElements = document.querySelectorAll('.note span:first-child');
+                        noteElements.forEach(function (element) {
+                            if (element.textContent === note) {
+                                element.parentElement.remove();
+                            }
+                        });
+                    }
+                };
 
-          request.onsuccess = function(event) {
-              console.log('Data added locally.');
-          };
+                function deleteNoteLocally(note) {
+                    const transaction = db.transaction(['myData'], 'readwrite');
+                    const objectStore = transaction.objectStore('myData');
+                    const request = objectStore.delete(note);
 
-          request.onerror = function(event) {
-              console.error('Error adding data locally.');
-          };
-      }  
+                    request.onsuccess = function(event) {
+                        console.log('Note deleted locally.');
+                    };
 
-      function displayStoredNotes() {
-        const transaction = db.transaction(['myData'], 'readonly');
-        const objectStore = transaction.objectStore('myData');
-        const request = objectStore.getAll();
+                    request.onerror = function(event) {
+                        console.error('Error deleting note locally.');
+                    };
+                }
+            }
 
-        request.onsuccess = function (event) {
-            const notes = event.target.result;
-            notes.forEach(function(data) {
-                appendNoteToList(data.note);
+            // Handle user input and save locally
+            const noteForm = document.getElementById('note-form');
+            const noteInput = document.getElementById('note-input');
+            const notesList = document.getElementById('notes-list');
+
+            noteForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const note = noteInput.value.trim();
+                if (note) {
+                    // Save the note locally
+                    saveDataLocally({ note });
+
+                    // Update the UI
+                    appendNoteToList(note);
+
+                    // Clear the input field
+                    noteInput.value = '';
+                }
             });
-        };
-      }
-    });
+        });
   </script>
 </html>

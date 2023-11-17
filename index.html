@@ -14,6 +14,17 @@
     <p id="greeting">Nice to meet you!</p>
     <p class="text">This is a text!</p>
     <p class="text2">This is for Rainer!</p>
+    <div id="notes-container">
+      <h2>Enter a Note:</h2>
+      <form id="note-form">
+          <label for="note-input">Note:</label>
+          <input type="text" id="note-input" name="note" required>
+          <button type="submit">Save</button>
+      </form>
+
+      <h2>Stored Notes:</h2>
+      <ul id="notes-list"></ul>
+    </div>
   </body>
   <footer>
     <span id="status-dot"></span>
@@ -33,10 +44,39 @@
 
           // Add an event listener to detect the online/offline status
           window.addEventListener('online', updateStatus);
+          //window.addEventListener('online', syncData);
           window.addEventListener('offline', updateStatus);
 
           // Initial status update
           updateStatus();
+      }
+
+      // Handle user input and save locally
+      const noteForm = document.getElementById('note-form');
+      const noteInput = document.getElementById('note-input');
+      const notesList = document.getElementById('notes-list');
+
+      noteForm.addEventListener('submit', function (event) {
+          event.preventDefault();
+
+          const note = noteInput.value.trim();
+          if (note) {
+              // Save the note locally
+              saveDataLocally({ note });
+
+              // Update the UI
+              appendNoteToList(note);
+
+              // Clear the input field
+              noteInput.value = '';
+          }
+      });
+
+      function appendNoteToList(note) {
+          const listItem = document.createElement('li');
+          listItem.className = 'note';
+          listItem.textContent = note;
+          notesList.appendChild(listItem);
       }
 
       function updateStatus() {
@@ -54,6 +94,76 @@
             //statusMessage.style.color = 'red';
             statusDot.style.backgroundColor = 'red';
         }
+      }
+
+      // Open or create an IndexedDB database
+      var db;
+      var request = indexedDB.open('MyDatabase', 1);
+
+      request.onupgradeneeded = function(event) {
+          db = event.target.result;
+          var objectStore = db.createObjectStore('myData', { keyPath: 'id', autoIncrement: true });
+      };
+
+      request.onsuccess = function(event) {
+          db = event.target.result;
+      };
+
+      function saveDataLocally(data) {
+          var transaction = db.transaction(['myData'], 'readwrite');
+          var objectStore = transaction.objectStore('myData');
+          var request = objectStore.add(data);
+
+          request.onsuccess = function(event) {
+              console.log('Data added locally.');
+          };
+
+          request.onerror = function(event) {
+              console.error('Error adding data locally.');
+          };
+      }
+
+      function syncData() {
+        // Retrieve data from local storage
+        var transaction = db.transaction(['myData'], 'readonly');
+        var objectStore = transaction.objectStore('myData');
+        var request = objectStore.getAll();
+
+        request.onsuccess = function(event) {
+            var data = event.target.result;
+
+            // Send data to the server
+            if (navigator.onLine && data.length > 0) {
+                sendDataToServer(data);
+            }
+        };
+      }
+
+      function sendDataToServer(data) {
+          // Use an API endpoint on your server to store data in your server-side database
+          // Example using fetch API:
+          fetch('/api/saveData', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data),
+          })
+          .then(response => response.json())
+          .then(result => {
+              console.log('Data synced with server:', result);
+              // Optionally, clear locally stored data after successful sync
+              clearLocalData();
+          })
+          .catch(error => {
+              console.error('Error syncing data with server:', error);
+          });
+      }
+
+      function clearLocalData() {
+          var transaction = db.transaction(['myData'], 'readwrite');
+          var objectStore = transaction.objectStore('myData');
+          objectStore.clear();
       }
     });
   </script>

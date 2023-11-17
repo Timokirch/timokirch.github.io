@@ -79,12 +79,12 @@
                     };
                 }
 
-                function appendNoteToList(note) {
+                function appendNoteToList(data) {
                     const listItem = document.createElement('li');
                     listItem.className = 'note';
                     listItem.innerHTML = `
-                        <span>${note}</span>
-                        <span class="delete-icon" onclick="deleteNote('${note}')">&#128465;</span>
+                        <span>${data.note}</span>
+                        <span class="delete-icon" onclick="deleteNote('${data.note}')">&#128465;</span>
                     `;
                     notesList.appendChild(listItem);
                 }

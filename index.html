@@ -17,6 +17,10 @@
     <p class="text2">This is for Rainer!</p>
   </body>
   <!-- Service Worker -->
+  <footer>
+    <span id="status-dot"></span>
+    <span>Online/Offline Status</span>
+  </footer>
   <script>
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('service-worker.js')
@@ -52,8 +56,4 @@
       }
     }
   </script>
-  <footer>
-    <span id="status-dot"></span>
-    <span>Online/Offline Status</span>
-  </footer>
 </html>

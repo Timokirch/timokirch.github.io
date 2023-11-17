@@ -125,16 +125,18 @@
               console.error('Error adding data locally.');
           };
       }  
-      
-      function displayStoredNotes() {
-          const transaction = db.transaction(['myData'], 'readonly');
-          const objectStore = transaction.objectStore('myData');
-          const request = objectStore.getAll();
 
-          request.onsuccess = function (event) {
-              const notes = event.target.result;
-              notes.forEach(appendNoteToList);
-          };
+      function displayStoredNotes() {
+        const transaction = db.transaction(['myData'], 'readonly');
+        const objectStore = transaction.objectStore('myData');
+        const request = objectStore.getAll();
+
+        request.onsuccess = function (event) {
+            const notes = event.target.result;
+            notes.forEach(function(data) {
+                appendNoteToList(data.note);
+            });
+        };
       }
     });
   </script>

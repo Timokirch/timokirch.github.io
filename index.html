@@ -121,50 +121,7 @@
           request.onerror = function(event) {
               console.error('Error adding data locally.');
           };
-      }
-
-      function syncData() {
-        // Retrieve data from local storage
-        var transaction = db.transaction(['myData'], 'readonly');
-        var objectStore = transaction.objectStore('myData');
-        var request = objectStore.getAll();
-
-        request.onsuccess = function(event) {
-            var data = event.target.result;
-
-            // Send data to the server
-            if (navigator.onLine && data.length > 0) {
-                sendDataToServer(data);
-            }
-        };
-      }
-
-      function sendDataToServer(data) {
-          // Use an API endpoint on your server to store data in your server-side database
-          // Example using fetch API:
-          fetch('/api/saveData', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(data),
-          })
-          .then(response => response.json())
-          .then(result => {
-              console.log('Data synced with server:', result);
-              // Optionally, clear locally stored data after successful sync
-              clearLocalData();
-          })
-          .catch(error => {
-              console.error('Error syncing data with server:', error);
-          });
-      }
-
-      function clearLocalData() {
-          var transaction = db.transaction(['myData'], 'readwrite');
-          var objectStore = transaction.objectStore('myData');
-          objectStore.clear();
-      }
+      }  
 
       // Retrieve and display locally stored notes on page load
       displayStoredNotes();

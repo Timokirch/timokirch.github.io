@@ -1,11 +1,25 @@
 body {
-    text-align: center;
-    background-color: olivedrab;
-  }
-  
+  text-align: center;
+  background-color: #AB2524;
+  margin: 0; 
+  padding: 0;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #f2f2f2;
+  text-align: center;
+  padding: 10px;
+  margin: 0; 
+}
+
 h3 {
   border: 2px;
   border-style: solid;
+  margin: 10px;
   padding: 2px;
   background-color: green;
 }
@@ -13,13 +27,15 @@ h3 {
 #greeting {
   border: 2px;
   border-style: solid;
+  margin: 10px;
   padding: 2px;
-  background-color: red;
+  background-color: rosybrown;
 }
 
 .text {
   border: 2px;
   border-style: solid;
+  margin: 10px;
   padding: 2px;
   background-color: orange;
 }
@@ -27,6 +43,7 @@ h3 {
 .text2 {
   border: 2px;
   border-style: solid;
+  margin: 10px;
   padding: 2px;
   background-color: lightcoral;
 }
@@ -39,6 +56,7 @@ footer {
   background-color: #f2f2f2;
   text-align: center;
   padding: 10px;
+  margin: 0; 
 }
 
 #status-dot {

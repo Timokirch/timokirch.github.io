@@ -1,36 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="HTML5 Testseite" />
-    <meta name="author" content="Timo" />
-    <title>HTML5 Offline</title>
-    <link rel="stylesheet" href="styles.css" />
-    <!-- <script src="js/scripts.js"></script> -->
-  </head>
-  <body>
-    <header>
-        <span>HTML5 Offline</span>
-    </header>
-    <button id="new-note-btn">+</button>
-    <div id="popup">
-        <h2>New Note:</h2>
-        <form id="new-note-form">
-            <label for="new-note-input">Note:</label>
-            <input type="text" id="new-note-input" name="new-note" required>
-            <button type="submit">Save</button>
-        </form>
-    </div>
-    <h3>Hello World</h3>
-    <p id="greeting">Nice to meet you!</p>
-    <p class="text">This is a text!</p>
-    <p class="text2">This is for Rainer!</p>
-    <div id="notes-container">
-      <h2>Stored Notes:</h2>
-      <ul id="notes-list"></ul>
-    </div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HTML5 Testseite" />
+  <meta name="author" content="Timo" />
+  <title>Notizbuch</title>
+  <style>
+    body {
+      text-align: center;
+      background-color: #AB2524;
+      margin: 0; 
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #f2f2f2;
+      text-align: center;
+      padding: 10px;
+      margin: 0; 
+    }
+
+    h3, #NotesListOutput, .text, .text2 {
+      border: 2px solid #333;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    h3 {
+      background-color: green;
+      color: white;
+    }
+
+    #NotesListOutput {
+      background-color: #f2f2f2af;
+    }
+
+    .text {
+      background-color: orange;
+    }
+
+    .text2 {
+      background-color: lightcoral;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #f2f2f2;
+      text-align: center;
+      padding: 10px;
+      margin: 0; 
+    }
+
+    #status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    #status-message {
+      font-weight: normal;
+    }
+
+    #notes-container {
+      max-width: 600px;
+      margin: 20px auto;
+    }
+
+    #notes-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .note {
+      margin-bottom: 10px;
+    }
+
+    .delete-icon {
+      cursor: pointer;
+      float: right;
+    }
+
+    #popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: #f2f2f2;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      z-index: 2;
+    }
+
+    #popup form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #popup label {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    #popup input {
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #popup button {
+      cursor: pointer;
+      background-color: green;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+
+    #popup button.cancel {
+      background-color: #AB2524;
+      margin-top: 10px;
+    }
+
+    #new-note-btn {
+      cursor: pointer;
+      background-color: green;
+      color: white;
+      border: none;
+      margin: 10px;
+      padding: 10px;
+      font-weight: bold;
+      font-size: 24px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>Notizbuch</span>
+  </header>
+  <div id="new-note-btn">+</div>
+  <div id="popup">
+    <!-- <h2>New Note:</h2> -->
+    <form id="new-note-form">
+      <label for="new-note-input">Notiz:</label>
+      <input type="text" id="new-note-input" name="new-note" required>
+      <button type="submit">Speichern</button>
+      <button type="button" class="cancel" onclick="closePopup()">Abbruch</button>
+    </form>
+  </div>
+  <!--
+  <h3>Hello World</h3>
+  <p id="greeting">Nice to meet you!</p>
+  <p class="text">This is a text!</p>
+  <p class="text2">This is for Rainer!</p> -->
+  <div id="notes-container">
+    <h2>Gespeicherte Notizen:</h2>
+    <ul id="notes-list"></ul>
+  </div>
   <footer>
     <span id="status-dot"></span>
     <span id="status-message"></span>
@@ -89,8 +233,10 @@
                     const listItem = document.createElement('li');
                     listItem.className = 'note';
                     listItem.innerHTML = `
-                        <span>${data.note}</span>
-                        <span class="delete-icon" onclick="deleteNote('${data.note}')">&#128465;</span>
+                        <div id="NotesListOutput">
+                            <span>${data.note}</span>
+                            <span class="delete-icon" onclick="deleteNote('${data.note}')">&#128465;</span>
+                        </div>
                     `;
                     notesList.appendChild(listItem);
                 }
@@ -110,6 +256,12 @@
                     }
                 }
 
+                function closePopup() {
+                    popupElement.style.display = 'none';
+                    // Clear the input field
+                    noteInput.value = '';
+                }
+
                 function displayStoredNotes() {
                     const transaction = db.transaction(['myData'], 'readonly');
                     const objectStore = transaction.objectStore('myData');
@@ -122,7 +274,7 @@
                 }
 
                 window.deleteNote = function(note) {
-                    if (confirm(`Do you really want to delete the note "${note}"?`)) {
+                    if (confirm(`Möchtest du wirklich diese Notiz löschen?\n\n"${note}"`)) {
                         // Delete the note locally
                         deleteNoteLocally(note);
 
@@ -168,7 +320,6 @@
             const noteForm = document.getElementById('new-note-form');
             const noteInput = document.getElementById('new-note-input');
             const notesList = document.getElementById('notes-list');
-            const popup = document.getElementById('popup'); 
 
             noteForm.addEventListener('submit', function (event) {
                 event.preventDefault();
@@ -185,39 +336,25 @@
                     noteInput.value = '';
 
                     // Close the popup
-                    popup.style.display = 'none';
+                    closePopup(); 
+
+                    // Display stored notes
+                    //displayStoredNotes();
                 }
             });
 
             // Show the popup when the plus button is clicked
             const newNoteBtn = document.getElementById('new-note-btn');
-            // const popup = document.getElementById('popup'); // Removed this line (already defined above)
+            const popupElement = document.getElementById('popup');
 
             newNoteBtn.addEventListener('click', function () {
-                popup.style.display = 'block';
+                popupElement.style.display = 'block'; 
+                noteInput.focus();
             });
 
-            // Close the popup when the form is submitted
-            // const newNoteForm = document.getElementById('new-note-form'); // Removed this line (already defined above)
-            // const newNoteInput = document.getElementById('new-note-input'); // Removed this line (already defined above)
-            
-            newNoteForm.addEventListener('submit', function (event) {
-                event.preventDefault();
-                const note = newNoteInput.value.trim();
-                if (note) {
-                    // Save the new note locally
-                    saveDataLocally({ note: note });
-
-                    // Update the UI
-                    appendNoteToList({ note: note });
-
-                    // Clear the input field
-                    newNoteInput.value = '';
-
-                    // Close the popup
-                    popup.style.display = 'none';
-                }
-            });
+            // Close the popup when the cancel button is clicked
+            const cancelBtn = document.querySelector('#popup button.cancel');
+            cancelBtn.addEventListener('click', closePopup);
         });
   </script>
 </html>

@@ -89,3 +89,35 @@ footer {
   color: red;
   cursor: pointer;
 }
+
+#popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  z-index: 2;
+}
+
+#popup form {
+  display: flex;
+  flex-direction: column;
+}
+
+#popup button {
+  margin-top: 10px;
+}
+
+#new-note-btn {
+  cursor: pointer;
+  background-color: green;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: 150%;
+  border-radius: 5px;
+}

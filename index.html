@@ -13,18 +13,20 @@
     <header>
         <span>HTML5 Offline</span>
     </header>
+    <button id="new-note-btn">+</button>
+    <div id="popup">
+        <h2>New Note:</h2>
+        <form id="new-note-form">
+            <label for="new-note-input">Note:</label>
+            <input type="text" id="new-note-input" name="new-note" required>
+            <button type="submit">Save</button>
+        </form>
+    </div>
     <h3>Hello World</h3>
     <p id="greeting">Nice to meet you!</p>
     <p class="text">This is a text!</p>
     <p class="text2">This is for Rainer!</p>
     <div id="notes-container">
-      <h2>Enter a Note:</h2>
-      <form id="note-form">
-          <label for="note-input">Note:</label>
-          <input type="text" id="note-input" name="note" required>
-          <button type="submit">Save</button>
-      </form>
-
       <h2>Stored Notes:</h2>
       <ul id="notes-list"></ul>
     </div>
@@ -179,6 +181,35 @@
 
                     // Clear the input field
                     noteInput.value = '';
+                }
+            });
+
+            // Show the popup when the plus button is clicked
+            const newNoteBtn = document.getElementById('new-note-btn');
+            const popup = document.getElementById('popup');
+            const newNoteForm = document.getElementById('new-note-form');
+            const newNoteInput = document.getElementById('new-note-input');
+
+            newNoteBtn.addEventListener('click', function () {
+                popup.style.display = 'block';
+            });
+
+            // Close the popup when the form is submitted
+            newNoteForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const note = newNoteInput.value.trim();
+                if (note) {
+                // Save the new note locally
+                saveDataLocally({ note: note });
+
+                // Update the UI
+                appendNoteToList({ note: note });
+
+                // Clear the input field
+                newNoteInput.value = '';
+
+                // Close the popup
+                popup.style.display = 'none';
                 }
             });
         });

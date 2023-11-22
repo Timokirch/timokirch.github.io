@@ -1,6 +1,6 @@
 // Service Worker file
 
-const cacheName = 'offline-cache-v2';
+const cacheName = 'offline-cache-v1';
 const cacheFiles = [
     '/',
     '/index.html',

@@ -1,6 +1,6 @@
 // Service Worker file
 
-const cacheName = 'v0.1';
+const cacheName = 'v1';
 const cacheFiles = [
     '/',
     '/index.html',
@@ -21,17 +21,9 @@ self.addEventListener('fetch', function(event) {
         caches.match(event.request).then(function(response) {
             return response || fetch(event.request, { cache: 'no-store' })
                 .then(function(fetchResponse) {
-                    // Check if the response has a valid Cache-Control header
-                    const cacheControl = fetchResponse.headers.get('cache-control');
-                    if (!cacheControl || cacheControl.includes('no-store')) {
-                        // Do not cache the response
-                        return fetchResponse;
-                    }
-
-                    // Ensure that the 'x-content-type-options' header is present
                     const headers = new Headers(fetchResponse.headers);
                     headers.append('x-content-type-options', 'nosniff');
-                    headers.append('cache-control', 'max-age=2592000'); // 30 days in seconds
+                    headers.append('cache-control', 'max-age=2592000'); 
                     const clonedResponse = new Response(fetchResponse.body, {
                         status: fetchResponse.status,
                         statusText: fetchResponse.statusText,

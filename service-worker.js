@@ -24,8 +24,10 @@ self.addEventListener('fetch', function(event) {
     );
 });
 
-/*
 self.addEventListener('activate', function(event) {
+    // Claim all open clients for the current service worker
+    event.waitUntil(clients.claim());
+
     // Delete old caches when a new version is activated
     event.waitUntil(
         caches.keys().then(function(cacheNames) {
@@ -39,23 +41,7 @@ self.addEventListener('activate', function(event) {
         })
     );
 });
-*/
 
-this.addEventListener("activate", (event) => {
-    const cachesToKeep = cacheName;
-  
-    event.waitUntil(
-      caches.keys().then((keyList) =>
-        Promise.all(
-          keyList.map((key) => {
-            if (!cachesToKeep.includes(key)) {
-              return caches.delete(key);
-            }
-          }),
-        ),
-      ),
-    );
-  });
 
 // Update the cache whenever the application is online
 self.addEventListener('message', function(event) {

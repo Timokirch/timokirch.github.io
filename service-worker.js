@@ -1,6 +1,6 @@
 // Service Worker file
 
-const cacheName = 'v4';
+const cacheName = 'v5';
 const cacheFiles = [
     '/',
     '/index.html',
@@ -22,7 +22,7 @@ self.addEventListener('fetch', function(event) {
             return response || fetch(event.request, { cache: 'no-store' })
                 .then(function(fetchResponse) {
                     // Check if the response has changed before updating the cache
-                    if (
+                    if (!response ||
                         fetchResponse.headers.get('ETag') !== response.headers.get('ETag') ||
                         fetchResponse.headers.get('Last-Modified') !== response.headers.get('Last-Modified')
                     ) {
@@ -65,7 +65,7 @@ self.addEventListener('activate', function(event) {
     );
 });
 
-/*
+
 // Update the cache whenever the application is online
 self.addEventListener('message', function(event) {
     if (event.data === 'online') {
@@ -74,4 +74,3 @@ self.addEventListener('message', function(event) {
         });
     }
 });
-*/

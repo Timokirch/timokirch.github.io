@@ -19,9 +19,26 @@ self.addEventListener('install', function(event) {
 self.addEventListener('fetch', function(event) {
     event.respondWith(
         caches.match(event.request).then(function(response) {
-            return response || fetch(event.request);
-        })
-    );
+            return response || fetch(event.request, { cache: 'no-store' })
+            .then(function(fetchResponse) {
+                // Ensure that the 'x-content-type-options' header is present
+                const headers = new Headers(fetchResponse.headers);
+                headers.append('x-content-type-options', 'nosniff');
+                const clonedResponse = new Response(fetchResponse.body, {
+                    status: fetchResponse.status,
+                    statusText: fetchResponse.statusText,
+                    headers: headers,
+                });
+
+                // Cache the cloned response
+                caches.open(cacheName).then(function(cache) {
+                    cache.put(event.request, clonedResponse);
+                });
+
+                return fetchResponse;
+            });
+    })
+);
 });
 
 self.addEventListener('activate', function(event) {

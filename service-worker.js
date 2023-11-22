@@ -21,6 +21,13 @@ self.addEventListener('fetch', function(event) {
         caches.match(event.request).then(function(response) {
             return response || fetch(event.request, { cache: 'no-store' })
             .then(function(fetchResponse) {
+                // Check if the response has a valid Cache-Control header
+                const cacheControl = fetchResponse.headers.get('cache-control');
+                if (!cacheControl || cacheControl.includes('no-store')) {
+                    // Do not cache the response
+                    return fetchResponse;
+                }
+
                 // Ensure that the 'x-content-type-options' header is present
                 const headers = new Headers(fetchResponse.headers);
                 headers.append('x-content-type-options', 'nosniff');
@@ -40,6 +47,7 @@ self.addEventListener('fetch', function(event) {
     })
 );
 });
+
 
 self.addEventListener('activate', function(event) {
     // Claim all open clients for the current service worker

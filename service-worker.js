@@ -41,7 +41,7 @@ self.addEventListener('activate', function(event) {
 });
 */
 
-self.addEventListener("activate", (event) => {
+this.addEventListener("activate", (event) => {
     const cachesToKeep = cacheName;
   
     event.waitUntil(

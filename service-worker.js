@@ -1,6 +1,6 @@
 // Service Worker file
 
-const cacheName = 'v1';
+const cacheName = 'v2';
 const cacheFiles = [
     '/',
     '/index.html',

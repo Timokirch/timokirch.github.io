@@ -72,6 +72,5 @@ self.addEventListener('message', function(event) {
         caches.open(cacheName).then(function(cache) {
             return cache.addAll(cacheFiles);
         });
-        location.reload(true);
     }
 });

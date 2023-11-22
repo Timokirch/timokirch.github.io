@@ -1,6 +1,6 @@
 // Service Worker file
 
-const cacheName = 'v2';
+const cacheName = 'v3';
 const cacheFiles = [
     '/',
     '/index.html',
@@ -21,26 +21,31 @@ self.addEventListener('fetch', function(event) {
         caches.match(event.request).then(function(response) {
             return response || fetch(event.request, { cache: 'no-store' })
                 .then(function(fetchResponse) {
-                    const headers = new Headers(fetchResponse.headers);
-                    headers.append('x-content-type-options', 'nosniff');
-                    headers.append('cache-control', 'max-age=2592000'); 
-                    const clonedResponse = new Response(fetchResponse.body, {
-                        status: fetchResponse.status,
-                        statusText: fetchResponse.statusText,
-                        headers: headers,
-                    });
+                    // Check if the response has changed before updating the cache
+                    if (
+                        fetchResponse.headers.get('ETag') !== response.headers.get('ETag') ||
+                        fetchResponse.headers.get('Last-Modified') !== response.headers.get('Last-Modified')
+                    ) {
+                        const headers = new Headers(fetchResponse.headers);
+                        headers.append('x-content-type-options', 'nosniff');
+                        headers.append('cache-control', 'max-age=2592000');
+                        const clonedResponse = new Response(fetchResponse.body, {
+                            status: fetchResponse.status,
+                            statusText: fetchResponse.statusText,
+                            headers: headers,
+                        });
 
-                    // Cache the cloned response
-                    caches.open(cacheName).then(function(cache) {
-                        cache.put(event.request, clonedResponse);
-                    });
+                        // Cache the cloned response
+                        caches.open(cacheName).then(function(cache) {
+                            cache.put(event.request, clonedResponse);
+                        });
+                    }
 
                     return fetchResponse;
                 });
         })
     );
 });
-
 
 self.addEventListener('activate', function(event) {
     // Claim all open clients for the current service worker
@@ -60,7 +65,7 @@ self.addEventListener('activate', function(event) {
     );
 });
 
-
+/*
 // Update the cache whenever the application is online
 self.addEventListener('message', function(event) {
     if (event.data === 'online') {
@@ -69,3 +74,4 @@ self.addEventListener('message', function(event) {
         });
     }
 });
+*/

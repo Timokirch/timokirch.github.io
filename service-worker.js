@@ -1,6 +1,6 @@
 // Service Worker file
 
-const cacheName = 'offline-cache-v1';
+const cacheName = 'v1';
 const cacheFiles = [
     '/',
     '/index.html',
@@ -24,6 +24,7 @@ self.addEventListener('fetch', function(event) {
     );
 });
 
+/*
 self.addEventListener('activate', function(event) {
     // Delete old caches when a new version is activated
     event.waitUntil(
@@ -38,6 +39,23 @@ self.addEventListener('activate', function(event) {
         })
     );
 });
+*/
+
+self.addEventListener("activate", (event) => {
+    const cachesToKeep = cacheName;
+  
+    event.waitUntil(
+      caches.keys().then((keyList) =>
+        Promise.all(
+          keyList.map((key) => {
+            if (!cachesToKeep.includes(key)) {
+              return caches.delete(key);
+            }
+          }),
+        ),
+      ),
+    );
+  });
 
 // Update the cache whenever the application is online
 self.addEventListener('message', function(event) {

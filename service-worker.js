@@ -1,6 +1,6 @@
 // Service Worker file
 
-const cacheName = 'v5';
+const cacheName = 'v1';
 const cacheFiles = [
     '/',
     '/index.html',
@@ -72,5 +72,6 @@ self.addEventListener('message', function(event) {
         caches.open(cacheName).then(function(cache) {
             return cache.addAll(cacheFiles);
         });
+        location.reload(true);
     }
 });
